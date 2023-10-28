@@ -3,6 +3,7 @@ import React from 'react'
 import SignInButton from './SignInButton'
 import { getAuthSession } from '@/lib/nextauth'
 import UserAccountNav from './UserAccountNav'
+import { ThemeToggle } from './ThemeToggle'
 
 type Props = {}
 
@@ -19,12 +20,15 @@ const Navbar = async (props: Props) => {
                 <p className="rounded-lg border-2 border-b-4 border-r-2 border-black px-2 py-1 text-xl font-bold transition-all hover:-translate-y-[2px] md:block dark:border-white">QuizzAi</p>
                 </Link>
                 <div className="flex items-center">
-                  {session?.user ? (
-                    <UserAccountNav user={session.user} />
-                  ) : (
-                    <SignInButton text="Sign In" />
-                  )}
-                    
+                  <ThemeToggle className="mr-3" />
+                  <div className="flex items-center">
+                    {session?.user ? (
+                      <UserAccountNav user={session.user} />
+                    ) : (
+                      <SignInButton text="Sign In" />
+                    )}
+                      
+                  </div>
                 </div>
             </div>
         </div>
