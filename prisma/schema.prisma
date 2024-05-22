@@ -75,7 +75,7 @@ model Question {
   gameId            String
   options           Json? // only for mcq questions
   pourentageCorrect Float? // for open ended questions
-  isCorrent         Boolean? // for mcq questions 
+  isCorrect         Boolean? // for mcq questions 
   questionType      GameType
   userAnswer        String?
 
