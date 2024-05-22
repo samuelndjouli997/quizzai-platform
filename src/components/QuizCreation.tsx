@@ -19,12 +19,26 @@ import {
 import { Button } from './ui/button';
 import { BookOpen, CopyCheck } from 'lucide-react';
 import { Separator } from './ui/separator';
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 type Props = {}
 
 type Input = z.infer<typeof QuizCreationSchema>
 
 const QuizCreation = (props: Props) => {
+    const router = useRouter();
+    const { mutate: getQuestions, isPending } = useMutation({
+        mutationFn: async ({ amount, topic, type }: Input) => {
+          const response = await axios.post('/api/game', {
+            amount,
+            topic,
+            type
+          });
+          return response.data;
+        }
+    });
     const form = useForm<Input>({
         resolver: zodResolver(QuizCreationSchema), 
         defaultValues: {
@@ -35,7 +49,19 @@ const QuizCreation = (props: Props) => {
     });
 
     function onSubmit(input: Input) {
-        alert(JSON.stringify(input, null, 0))
+        getQuestions({
+            amount: input.amount,
+            topic: input.topic,
+            type: input.type
+        }, {
+            onSuccess: ({gameId}) => {
+                if (form.getValues('type') === 'open_ended') {
+                    router.push(`/play/open-ended/${gameId}`)
+                } else {
+                    router.push(`/play/mcq/${gameId}`) 
+                }
+            }
+        });
     }
 
     // here we add a watch to re-render the whole component whenever the state changes
@@ -116,7 +142,7 @@ const QuizCreation = (props: Props) => {
                                 Open Ended
                             </Button>
                         </div>
-                        <Button type="submit">Submit</Button>
+                        <Button disabled={isPending} type="submit">Submit</Button>
                     </form>
                 </Form>
             </CardContent>
